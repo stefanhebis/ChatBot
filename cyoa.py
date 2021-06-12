@@ -37,8 +37,8 @@ async def Vote(message, debug):
 	first = 0
 	second = 0
 
-	first += int(reaction_list.count) 
-	second += int(reaction_list.count)
+	#first += reaction_list.count
+	#second += reaction_list.count
 		
 	if debug:
 		await message.channel_send(str(reaction_list))
