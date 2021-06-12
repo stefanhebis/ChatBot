@@ -127,7 +127,7 @@ async def on_message(message):
 		await message.channel.send(bleep_message)
 
 	if meddelande.startswith('!cyoa'):
-		await cyoa.main(channel, 1)
+		await cyoa.main(channel, 0)
 
 	if meddelande.startswith("stefan"):
 		if meddelande.endswith("?"):
