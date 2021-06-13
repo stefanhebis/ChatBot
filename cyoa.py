@@ -23,23 +23,37 @@ async def Prompt(channel, page, debug):
 	End = getEnd(page)
 	
 	prompt_message = str(renderPromptMessage(page, End))
-
-	refers = getRefer(page)
-	first_refer = refers[0]
-	second_refer = refers[1]
-
 	sent_message = await channel.send(prompt_message)
 
-	if End:
+	if End:	
 		await endAdventure(channel, debug)
 
 	else:
+		refers = getRefer(page)
+		first_refer = refers[0]
+		second_refer = refers[1]
 		await sent_message.add_reaction("1️⃣")
 		await sent_message.add_reaction("2️⃣")
 		await asyncio.sleep(20)
 		voteresult = await Vote(channel, sent_message.id, debug, first_refer, second_refer)
+
+		refer = str(voteresult[0])
+		returntext = str(voteresult[1])
+
+		
+		
+
 		# todo skicka ett litet svar efter val
-		await Prompt(channel, voteresult, debug)
+
+		reply_message_text = adventure[str(page)][returntext]
+		reply_message = \
+			"```" \
+			+ str(reply_message_text) \
+			+ "```" 
+
+		await channel.send(reply_message)
+
+		await Prompt(channel, refer, debug)
 
 async def Vote(channel, message_id, debug, first_refer, second_refer):
 	
@@ -59,22 +73,22 @@ async def Vote(channel, message_id, debug, first_refer, second_refer):
 		await message.channel.send(second_r)
 
 	if first_r > second_r:
-		return first_refer
+		return first_refer, "first.return"
 	elif second_r > first_r:
-		return second_refer
+		return second_refer, "second.return"
 	else:
 		return random.randint(1,2)
 
 def renderPromptMessage(page, end):
 	#ska fixa bättre data system :)
 	# todo stöd för fler val !
-	adventure_content = adventure[str(page)]
-	prompt_t = adventure_content[0]
-	first_t = adventure_content[1]
-	second_t = adventure_content[3]
 	
-
-	prompt_message = \
+	prompt_t = adventure[str(page)]["prompt.text"]
+	
+	if not end:
+		first_t = adventure[str(page)]["first.text"]
+		second_t = adventure[str(page)]["second.text"]
+		prompt_message = \
 		"```" \
 		+ prompt_t \
 		+ "\n" \
@@ -99,51 +113,63 @@ def renderPromptMessage(page, end):
 		return prompt_message
 
 def getRefer(page):
-	refer_content = adventure[str(page)]
 
-	first_refer = refer_content[2]
-	second_refer = refer_content[4]
+	first_refer = adventure[str(page)]["first.refer"]
+	second_refer = adventure[str(page)]["second.refer"]
 
 	return first_refer, second_refer
 
 def getEnd(page):
-	end_content = adventure[str(page)]
-
-	End = end_content[5]
-
+	
+	End = adventure[str(page)]["ending"]
 	return End
 
 
 
 # det är detta som ska bli bättre asså
 adventure = {
-	"1": [
-		"Mitt namn är Teo och jag jobbar i dildofabriken. \n Klockan ringer! Dags att vakna och åka till jobbet!", 
-		"Jag cyklar till jobbet på min enhjuling.", 2, 
-		"Jag flyger till jobbet i mitt lilla propellerplan.", 2,
-		False],
+	"1": {
+		"prompt.text": "Mitt namn är Teo och jag jobbar i dildofabriken.\nKlockan ringer! Dags att vakna och åka till jobbet!", 
+		"first.text": "Jag cyklar till jobbet på min enhjuling.", 
+		"first.refer": 2, 
+		"first.return": "Pling pling! Ur vägen!",
+		"second.text": "Jag flyger till jobbet i mitt lilla propellerplan.", 
+		"second.return": "Brum brum! Det är helt normalt att flyga propellerplan till jobbet faktiskt.",
+		"second.refer": 2,
+		"ending": False},
 
-	"2": [
-		"Äntligen på jobbet! Dags att suga dildos! \n På vägen till dildosugarrummet går jag förbi en kollega.", 
-		"Hej Stefan!", 3, 
-		"Ingen tid för snack - det finns dildos att suga!", 4,
-		False],
+	"2": {
+		"prompt.text": "Äntligen på jobbet! Dags att suga dildos!\nPå vägen till dildosugarrummet går jag förbi en kollega.", 
+		"first.text": "Hej Stefan!",
+		"first.refer": 3,
+		"first.return": "Hej Stefan!",
+		"second.text": "Ingen tid för snack - det finns dildos att suga!", 
+		"second.return": "Ingen tid för snack - det finns dildos att suga!",
+		"second.refer": 4,
+		"ending": False},
 
-	"3": [
-		"Hej Teo! svarar min kollega Stefan Hebis.", 
-		"Hej Stefan!", 3, 
-		"Hejdå Stefan!", 4, 
-		False],
+	"3": {
+		"prompt.text": "Hej Teo! svarar min kollega Stefan Hebis.", 
+		"first.text": "Hej Stefan!", 
+		"first.return": "Hej Stefan!",
+		"first.refer": 3, 
+		"second.text": "Hejdå Stefan!", 
+		"second.return": "Hejdå Stefan!", 
+		"second.refer": 4, 
+		"ending": False},
 
-	"4": [
-		"Äntligen framme i dildosugarrummet. Nu är det dags för mitt jobb att börja!", 
-		"Mums!", 5, 
-		"Smask!", 5,
-		False],
-	"5": [
-		"Ja älsk å sug dildos ja!",
-		"",5,
-		"",5,
-		True],
+	"4": {
+		"prompt.text": "Äntligen framme i dildosugarrummet. Nu är det dags för mitt jobb att börja!", 
+		"first.text": "Mums!", 
+		"first.return": "Mums!",
+		"first.refer": 5, 
+		"second.text": "Smask!",
+		"second.return": "Smask!",
+		"second.refer": 5,
+		"ending": False},
+
+	"5": {
+		"prompt.text": "Ja älsk å sug dildos ja!",
+		"ending": True},
 	
 }
