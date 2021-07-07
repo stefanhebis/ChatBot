@@ -2,7 +2,7 @@ import discord
 import os
 import random
 import pytz
-import roll, stats, bleep, headline, opinion, uska, cyoa
+import roll, stats, bleep, headline, opinion, uska, cyoa, lads
 from discord.ext import tasks
 from datetime import datetime
 from keep_alive import keep_alive
@@ -67,6 +67,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	#namn = getName(message.author.name)
+	namn = message.author.name
 	meddelande = message.content.lower()
 	#titel = getTitle(bleep.getMood())
 	channel = message.channel
@@ -121,6 +122,18 @@ async def on_message(message):
 		namn = getName(message.author.name)
 		roll_message = roll.main(namn)
 		await message.channel.send(roll_message)
+
+	if meddelande.startswith('!lads'):
+		await lads.main(channel)
+
+	if meddelande.startswith('!join'):
+		await lads.JoinLads(channel, namn)
+
+	if meddelande.startswith("!toplads"):
+		await lads.PrintTopLads(channel)
+
+	if meddelande.startswith("!inlad"):
+		await lads.Init(channel)
 
 	if meddelande.startswith('!bleep'):
 		bleep_message = str(bleep.main(init=False))

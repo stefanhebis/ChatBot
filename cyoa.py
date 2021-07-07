@@ -40,11 +40,6 @@ async def Prompt(channel, page, debug):
 		refer = str(voteresult[0])
 		returntext = str(voteresult[1])
 
-		
-		
-
-		# todo skicka ett litet svar efter val
-
 		reply_message_text = adventure[str(page)][returntext]
 		reply_message = \
 			"```" \
@@ -80,11 +75,10 @@ async def Vote(channel, message_id, debug, first_refer, second_refer):
 		return random.randint(1,2)
 
 def renderPromptMessage(page, end):
-	#ska fixa bättre data system :)
 	# todo stöd för fler val !
 	
 	prompt_t = adventure[str(page)]["prompt.text"]
-	
+
 	if not end:
 		first_t = adventure[str(page)]["first.text"]
 		second_t = adventure[str(page)]["second.text"]
@@ -113,20 +107,17 @@ def renderPromptMessage(page, end):
 		return prompt_message
 
 def getRefer(page):
-
 	first_refer = adventure[str(page)]["first.refer"]
 	second_refer = adventure[str(page)]["second.refer"]
 
 	return first_refer, second_refer
 
 def getEnd(page):
-	
 	End = adventure[str(page)]["ending"]
 	return End
 
 
 
-# det är detta som ska bli bättre asså
 adventure = {
 	"1": {
 		"prompt.text": "Mitt namn är Teo och jag jobbar i dildofabriken.\nKlockan ringer! Dags att vakna och åka till jobbet!", 
