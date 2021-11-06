@@ -1,39 +1,43 @@
 import asyncio
 from replit import db
-from discord.utils import get
-
-
+from discord import Embed
 
 async def main(channel):
-	print("main")
-	
 	await StartLads(channel)
 
+
 async def StartLads(channel):
-	print("start lads")
-	
+	stefan_url = "https://i.imgur.com/LT3cAQP.jpg"
 	lads_message_format = \
 	"```" \
 	+ "\nOi ! Lads check !\n" \
 	+ "```\n" \
 
-
 	lads_message = str(lads_message_format)
 
-	sent_message = await channel.send(lads_message)
-	
+	embed=Embed(title="Lads !", color=0x737ad9)
+	embed.set_author(name="Stefan Hebis", icon_url=stefan_url)
+	embed.set_thumbnail(url=stefan_url)
+	embed.add_field(name="Lads check !", value=lads_message, inline=False)
+	embed.set_footer(text="/ Stefan")
+	sent_message = await channel.send(embed=embed)	
+
 	await LadsCheck(channel, sent_message.id)
 	
 
 async def PrintTopLads(channel):
+	lads_emoji = "<:svoda:787100880188473354>"
+	#stefan_url = channel.author.avatar_url
+	stefan_url = "https://i.imgur.com/LT3cAQP.jpg"
 	top_lads_return = await GetTopLads(3)
+
 
 	firstlad = await GetName(top_lads_return[0])
 	secondlad = await GetName(top_lads_return[2])
 	thirdlad = await GetName(top_lads_return[4])
 	
 	top_lads_msg = "```" \
-	+ "\nTOP LADS = \n" \
+	"\n" \
 	+ "1: " + firstlad + " (" + str(top_lads_return[1]) + " LadPoints)" \
 	+ "\n" \
 	+ "2: " + secondlad + " (" + str(top_lads_return[3]) + " LadPoints)" \
@@ -41,23 +45,23 @@ async def PrintTopLads(channel):
 	+ "3: " + thirdlad + " (" + str(top_lads_return[5]) + " LadPoints)" \
 	+ "\n```" 
 
-	await channel.send(str(top_lads_msg))
+	#await channel.send(str(top_lads_msg))
+
+	embed=Embed(title="Lads !", color=0x737ad9)
+	embed.set_author(name="Stefan Hebis", icon_url=stefan_url)
+	embed.set_thumbnail(url=stefan_url)
+	embed.add_field(name="Top Lads !", value=str(top_lads_msg), inline=False)
+	embed.set_footer(text="/ Stefan")
+	await channel.send(embed=embed)	
+
 
 async def GetTopLads(lads_limit):
-	print("top lads")
 	keys = db.prefix("l+")
-	print(keys)
-	
-	loop = 0
-
 	top_lad = {"name":"name", "score":0}
-
 	top_lads = []
-
 	top_lads_message = []
 
 	for ladname in keys:
-		print(loop)
 		sladname = str(ladname)
 		sname = str(ladname)[2:]
 		score = db[sladname]
@@ -66,32 +70,19 @@ async def GetTopLads(lads_limit):
 		top_lad_c = top_lad.copy()
 		top_lads.append(top_lad_c)
 	
-	#sort_orders = sorted(top_lads.items(), key=lambda x: x[1][1], reverse=True)
-	#sort_key = top_lads[1]
-	#sorted_top_lads = []
-	#top_lads.sort(key=sort_key)
-	print("osorterad lista: " + str(top_lads))
 	top_lads.sort(key=lambda x: x.get("score"), reverse=True)
-	print("sorterad lista: " + str(top_lads))
-
+	
 	for t_l in top_lads:
 		sname = t_l["name"]
 		score = t_l["score"]
 		top_lads_message.append(sname)
 		top_lads_message.append(score)
 
-
-	
 	return top_lads_message
 
 
-
-
 async def AddHighScore(channel, name):
-	print("add high score")
 	sname = "l+" + str(name)
-	print(sname)
-
 	val = str(int(db[sname]) + 1)
 	db[sname] = val
 	return val
@@ -99,10 +90,9 @@ async def AddHighScore(channel, name):
 
 async def LadsCheck(channel, message_id):
 	lads_emoji = "<:svoda:787100880188473354>"
-	print("lads check")
 	message = await channel.fetch_message(message_id)
 	await message.add_reaction(lads_emoji)
-	await asyncio.sleep(8)
+	await asyncio.sleep(300)
 	lads = set()
 	message = await channel.fetch_message(message_id)
 	for reaction in message.reactions:
@@ -110,27 +100,22 @@ async def LadsCheck(channel, message_id):
 			if user.name == "Stefan Hebis":
 				print("stefan")
 			else: 
-				print("add LadsCheck")
 				lads.add(user)
 		
 	await UpdateHighScore(channel, lads)
 
+
 async def UpdateHighScore(channel, lads):
 	for lad in lads:
-			val = await AddHighScore(channel, lad.name)
-			#await channel.send(str(val))
+			await AddHighScore(channel, lad.name)
+
 
 async def JoinLads(channel, name):
 	sname = "l+" + str(name)
 	db[sname] = "0"
 	await channel.send("Oi " + name + " your a lad now !")
 
-async def Init(channel):
-	db["Stefan Hebis"] = "69"
-	db["British Bloke"] = "1"
-	print("init")
 	
-
 async def GetName(disc_name) -> str:
 	if disc_name == "ed":
 		return "Ed"
@@ -152,5 +137,3 @@ async def GetName(disc_name) -> str:
 		return "Micke"
 	else:
 		return disc_name
-			
-

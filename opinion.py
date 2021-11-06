@@ -40,7 +40,7 @@ def main() -> str:
 	#
 	# Nej, person, det är inte "ord" med foreteelse
 
-	person = ["Stefan Löfvén", "Annie Lööf", "demokratins fiender", "feminister" , "Vänsterpartiet", "Socialdemokraterna"]
+	person = ["Stefan Löfvén", "Annie Lööf", "demokratins fiender", "feminister" , "Vänsterpartiet", "Socialdemokraterna", "Belinda Olsson"]
 
 	ord = ["episkt", "coolt", "okej", "inne", "swag"]
 

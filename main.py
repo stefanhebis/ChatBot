@@ -2,7 +2,7 @@ import discord
 import os
 import random
 import pytz
-import roll, stats, bleep, headline, opinion, uska, cyoa, lads
+import roll, stats, bleep, headline, opinion, uska, cyoa, lads, påg, rpg
 from discord.ext import tasks
 from datetime import datetime
 from keep_alive import keep_alive
@@ -30,8 +30,15 @@ def getName(disc_name) -> str:
 		return "Marre"
 	elif disc_name == "jorts_michael":
 		return "Micke"
+	elif disc_name == "kamy":
+		return "Kamy"
 	else:
 		return disc_name
+
+def giveName() -> str:
+	chatten = ["Ed", "Kawa", "Teo", "Ale", "Bendik", "Danne", "Marre", "Micke", "Kamy", "Nils"]
+
+	return random.choice(chatten)
 
 def getTitle(mood) -> str:
 	titlar = {
@@ -75,6 +82,13 @@ async def on_message(message):
 	if message.author == client.user:
 		return
 
+
+	if meddelande.startswith('!rpg'):
+		command = meddelande.split()[1]
+		#argument = meddelande.split()[2]
+		sender = getName(message.author.name)
+		await rpg.action(command, sender, channel)
+
 	if "Ye" in message.content:
 		await message.channel.send('Ye !')
 
@@ -107,7 +121,16 @@ async def on_message(message):
 		with open(picture_url, 'rb') as f:
 			picture_send = discord.File(f)
 
-		await message.channel.send(uska_message, file = picture_send)  
+		await message.channel.send(uska_message, file = picture_send) 
+
+	if meddelande.startswith('!påg'):
+		påg_message = påg.main()
+		picture_url = påg.pic()
+
+		with open(picture_url, 'rb') as f:
+			picture_send = discord.File(f)
+
+		await message.channel.send(påg_message, file = picture_send) 
 
 	if meddelande.startswith('!opinion'):
 		opinion_message = opinion.main()
@@ -132,8 +155,6 @@ async def on_message(message):
 	if meddelande.startswith("!toplads"):
 		await lads.PrintTopLads(channel)
 
-	if meddelande.startswith("!inlad"):
-		await lads.Init(channel)
 
 	if meddelande.startswith('!bleep'):
 		bleep_message = str(bleep.main(init=False))
@@ -142,16 +163,22 @@ async def on_message(message):
 	if meddelande.startswith('!cyoa'):
 		await cyoa.main(channel, 0)
 
+	if meddelande.startswith('!convoy'):
+		await message.channel.send("Convoy")
+
 	if meddelande.startswith("stefan"):
 		if meddelande.endswith("?"):
-			eightball = random.randint(1, 2)
+			if meddelande.startswith("stefan vem"):
+				await message.channel.send("Där " + giveName() + " !")
+			else:
+				eightball = random.randint(1, 2)
 
-			if eightball == 1:
-				await message.channel.send("Jäpp !")
-				await message.add_reaction("👍")
-			elif eightball == 2:
-				await message.channel.send("Nä !")
-				await message.add_reaction("👎")
+				if eightball == 1:
+					await message.channel.send("Jäpp !")
+					await message.add_reaction("👍")
+				elif eightball == 2:
+					await message.channel.send("Nä !")
+					await message.add_reaction("👎")
 		else: 
 			if random.randint(1,10) == 10:
 				await message.add_reaction("👁️")
