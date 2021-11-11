@@ -2,10 +2,20 @@ import discord
 import os
 import random
 import pytz
-import roll, stats, bleep, headline, opinion, uska, cyoa, lads, påg, rpg
+import roll, stats, bleep, headline, opinion, uska, cyoa, lads, påg
 from discord.ext import tasks
 from datetime import datetime
 from keep_alive import keep_alive
+import asyncio
+import builtins
+
+from discord.ext import commands
+
+
+bot = commands.Bot(command_prefix='!')
+builtins.bot = bot
+
+import rpg
 
 client = discord.Client()
 kanal_dev = 828918567712849920
@@ -67,11 +77,22 @@ def getTitle(mood) -> str:
   
 	return random.choice(sel_titlar)
 
-@client.event
+@bot.event
 async def on_ready():
-	print('inloggad som {0.user} .. yee'.format(client))
+	print('inloggad som {0.user} .. yee'.format(bot))
 
-@client.event
+
+@bot.command(pass_context = True, name="rpg")
+async def stefanrpg(ctx, arg):
+
+	sender = ctx.message.author.name
+	sender_raw = ctx.message.author
+
+	await rpg.action(arg, sender, ctx.channel, sender_raw)
+
+
+
+@bot.event
 async def on_message(message):
 	#namn = getName(message.author.name)
 	namn = message.author.name
@@ -79,15 +100,11 @@ async def on_message(message):
 	#titel = getTitle(bleep.getMood())
 	channel = message.channel
 
-	if message.author == client.user:
+	if message.author == bot.user:
 		return
 
 
-	if meddelande.startswith('!rpg'):
-		command = meddelande.split()[1]
-		#argument = meddelande.split()[2]
-		sender = getName(message.author.name)
-		await rpg.action(command, sender, channel)
+
 
 	if "Ye" in message.content:
 		await message.channel.send('Ye !')
@@ -200,6 +217,8 @@ async def on_message(message):
 		else:
 			await message.add_reaction("🇳🇴")
 
+	await bot.process_commands(message)
+
 @tasks.loop(seconds=1)
 async def kolla_klockan():
   nutid = datetime.now(pytz.timezone("Europe/Stockholm"))
@@ -216,4 +235,28 @@ async def w8():
 kolla_klockan.start()
 keep_alive()
 
-client.run(os.getenv('TOKEN'))
+@bot.event
+async def waitForVal(message, author):
+
+	try:
+		
+		print(author)
+		print(message.id)
+
+		reaction, user = await bot.wait_for("reaction_add", timeout=15, check = lambda reaction, user: print(author))
+		print(user)
+		print(reaction)
+		print(reaction.message.id)
+		
+		#reaction, user = await client.wait_for("reaction_add", timeout=15, check = lambda reaction, user: user == author and (reaction.message.id == message.id))
+			
+	except asyncio.TimeoutError:
+			print("tid")
+			return
+			
+	else:
+		print(reaction)
+		print(reaction.emoji)
+		return reaction.emoji
+
+bot.run(os.getenv('TOKEN'))

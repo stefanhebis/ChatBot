@@ -5,10 +5,6 @@ import rpg
 async def roll(sender, channel, reroll) -> str:
 	owner = sender
 
-	if reroll == "nej":
-		if rpg_character.characterExists(owner) == "ja":
-			await rpg.send("Du har redan en karaktär.", channel)
-			return
 
 	race = get_race()
 	klass = get_klass()

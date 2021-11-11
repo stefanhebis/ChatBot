@@ -6,10 +6,15 @@ def characterExists(owner) -> str:
 
 	for character in keys:
 		powner = str("rpg+" + owner)
+		if not db[powner+"levande"]:
+			db[powner+"levande"] = "nej"
+			return False
+
 		if db[powner+"levande"] == "ja":
-			return "ja"
+				return True
 		else:
-			return "nej"
+				return False
+
 		
 
 async def addCharacter(owner, channel, race, klass, alignment, strength, dexterity, constitution, intelligence, wisdom, charisma, charname) -> str:
@@ -33,10 +38,7 @@ async def addCharacter(owner, channel, race, klass, alignment, strength, dexteri
 	await showCharacter(owner, channel)
 
 async def showCharacter(owner, channel) -> str:
-	if characterExists(owner) == "nej":
-		await rpg.send("Du har ingen karaktär. Använd !rpg roll för att rulla en.", channel)
-		return
-	else:
+
 		powner = str("rpg+" + owner)
 
 		roll_message = \
