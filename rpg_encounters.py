@@ -155,7 +155,7 @@ def randomEncounter(sender):
 		"insight": 20
 	}
 
-	return encounter2
+	return encounter1
 	
 
 	
