@@ -44,6 +44,8 @@ def getName(disc_name) -> str:
 		return "Kamy"
 	elif disc_name == "stibba2g4u":
 		return "Stibba"
+	elif disc_name == "nils4444":
+		return "Nils"
 	else:
 		return disc_name
 
@@ -103,6 +105,39 @@ async def turdlog(ctx):
 	await TurdLog.init(channel_id, announceChannel)
 
 
+@bot.command(pass_context=True, name="nyttnamn")
+async def nytt_smeknamn(ctx):
+	#byter discord-smeknamn på random person i chatten
+
+	nicknames = [
+	 "LillaSnuttePojken", "Alfons_Hitler", "* * [ [ [ 3 CM LÅNG ] ] ] * *",
+	 "DOLME3000", "Min Röv Ont..", "Da_AssLord", ".[ ShitSucker ].",
+	 "bruce__springsteen.mp3", "Kärlek Förgyller Allt=)",
+	 "Knubbig rosenkindad påg", "TheJamaicanSvullo420"
+	]
+
+	random_nick = random.choice(nicknames)
+	await ctx.author.edit(nick=random_nick)
+
+	await ctx.channel.send(f"{ctx.author.name} heter nu {random_nick}!")
+
+
+@bot.command(pass_context=True, name="namn")
+async def nytt_smeknamn(ctx):
+	#byter discord-smeknamn på random person i chatten
+
+	nicknames = [
+	 "LillaSnuttePojken", "Alfons_Hitler", "* * [ [ [ 3 CM LÅNG ] ] ] * *",
+	 "DOLME3000", "Min Röv Ont..", "Da_AssLord", ".[ ShitSucker ].",
+	 "bruce__springsteen.mp3", "Kärlek Förgyller Allt=)",
+	 "Knubbig rosenkindad påg", "TheJamaicanSvullo420"
+	]
+
+	ctx.author.edit(nick=random.choice(nicknames))
+
+	ctx.channel.send(f"{ctx.author.name} heter nu {ctx.author.nick}!")
+
+
 @bot.command(pass_context=True, name="dntest")
 async def dagens_nyheter(ctx):
 	# channel = commands.Bot.get_channel(bot, 757565322034151474)
@@ -113,7 +148,7 @@ async def dagens_nyheter(ctx):
 	dagens_headline = headline.main()
 	dagens_headline_text = dagens_headline[0]
 	dagens_headline_bild_url = dagens_headline[1]
-	dagens_headline_string = f"JUST NU: {dagens_headline_text}!"
+	dagens_headline_string = f"JUST NU: {dagens_headline_text}"
 
 	dagens_opinion_string = opinion.main()
 
