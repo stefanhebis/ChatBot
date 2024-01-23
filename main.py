@@ -2,7 +2,6 @@ import discord
 import os
 import random
 import pytz
-import roll, stats, bleep, headline, opinion, uska, cyoa, lads, påg, TurdLog
 from discord.ext import tasks
 from datetime import datetime, timedelta
 from keep_alive import keep_alive
@@ -10,12 +9,14 @@ import asyncio
 import builtins
 from replit import db
 
+import roll, stats, bleep, headline, opinion, uska, cyoa, lads, påg
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix='!')
 builtins.bot = bot
 
 import rpg
+import TurdLog
 
 client = discord.Client()
 kanal_dev = 828918567712849920
@@ -112,30 +113,29 @@ async def nytt_smeknamn(ctx):
 	nicknames = [
 	 "LillaSnuttePojken", "Alfons_Hitler", "* * [ [ [ 3 CM LÅNG ] ] ] * *",
 	 "DOLME3000", "Min Röv Ont..", "Da_AssLord", ".[ ShitSucker ].",
-	 "bruce__springsteen.mp3", "Kärlek Förgyller Allt=)",
-	 "Knubbig rosenkindad påg", "TheJamaicanSvullo420"
+	 "bruce__springsteen.mp3", "irriterande snubbe",
+	 "👼 Knubbig rosenkindad påg 👼", "TheJamaicanSvullo420",
+	 "C_H_O_C_K_L_A_D_M_J_Ö_L_K_", "Han Som Inte Duschar",
+	 "rosa fluff i näsan ^^", "svidde bäörs", "COVID = Rojalistisk Komplott",
+	 f"{getName(ctx.author.name)} Har MR I Röven 🤭", "vem här gillar öl",
+	 "UskaHunter69", "DRULEN", "-/- 0,3 på högskoleprovet -\-",
+	 "MBGA Make Birsta Great Again", "Stolt moderator för /r/filthatt", "Mr MR",
+	 "MMA-kille med för tighta jeans", "signerar sms med Hadde gött",
+	 "EPA-raggare med Supremekeps", "PubQuizMästar'n", "da_enlightened_wigga",
+	 "Gnarls Barkely-That make me Crazy", "Luttrad vinylkille",
+	 "Hade varit modell om han var längre", "Personen bakom CP-listan",
+	 "denna användare snackar bullshit", "Tyvärr inte välutrustad.",
+	 "Min penis är liten. Och?", "🍤 ANVÄNDARE MED LITEN PENIS 🍤", "fibromannen",
+	 "Utbränd sexarbetare", "Säsongsdeprimerad solovårare",
+	 "Kille Danne ringt polisen på", "Kyrkogårdsvaktmästarens pojk",
+	 "da Pussy Pirate", "DAN_DOLME.EXE", "Ales macka var inte ens så stor?",
+	 "Erik i Polyfamiljen"
 	]
 
 	random_nick = random.choice(nicknames)
 	await ctx.author.edit(nick=random_nick)
 
-	await ctx.channel.send(f"{ctx.author.name} heter nu {random_nick}!")
-
-
-@bot.command(pass_context=True, name="namn")
-async def nytt_smeknamn(ctx):
-	#byter discord-smeknamn på random person i chatten
-
-	nicknames = [
-	 "LillaSnuttePojken", "Alfons_Hitler", "* * [ [ [ 3 CM LÅNG ] ] ] * *",
-	 "DOLME3000", "Min Röv Ont..", "Da_AssLord", ".[ ShitSucker ].",
-	 "bruce__springsteen.mp3", "Kärlek Förgyller Allt=)",
-	 "Knubbig rosenkindad påg", "TheJamaicanSvullo420"
-	]
-
-	ctx.author.edit(nick=random.choice(nicknames))
-
-	ctx.channel.send(f"{ctx.author.name} heter nu {ctx.author.nick}!")
+	await ctx.channel.send(f"{getName(ctx.author.name)} heter nu {random_nick}")
 
 
 @bot.command(pass_context=True, name="dntest")

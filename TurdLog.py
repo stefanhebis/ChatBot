@@ -1,6 +1,8 @@
 import asyncio
-from replit import db
 from discord import Embed
+from builtins import bot
+
+stefan_url = "https://i.imgur.com/LT3cAQP.jpg"
 
 
 async def init(channel, announceChannel):
@@ -8,10 +10,10 @@ async def init(channel, announceChannel):
 
 
 async def TurdLog(channel, announceChannel):
-	stefan_url = "https://i.imgur.com/LT3cAQP.jpg"
+
 	init_message_format = \
  "```" \
- + "Press React To Init Turd" \
+ + "React To Init Turd" \
  + "```" \
 
 	init_message = str(init_message_format)
@@ -38,40 +40,81 @@ async def TurdCheck(channel, message_id, announceChannel):
 				if user.name == "Stefan Hebis":
 					print("")
 				else:
-					await TurdCreate(channel, announceChannel)
+					await TurdCreate(channel, announceChannel, user)
 					await asyncio.sleep(10)
 					await message.clear_reactions()
 					await message.add_reaction(turd_emoji)
 
 
-async def TurdCreate(channel, announceChannel):
+async def TurdCreate(channel, announceChannel, user):
 
-	messageId = await channel.send(
-	 '***TurdLog*** -- Turd Incoming ... React With Rating Of Experience To Deploy Turd -- ***TurdLog*** '
-	)
+	postedUser = user
+
+	init_message = '***TurdLog*** -- Turd Incoming ... React With Rating Of Experience To Deploy Turd -- ***TurdLog*** '
+
+	embed = Embed(title="TurdLog", color=0x737ad9)
+	embed.set_author(name="Stefan Hebis", icon_url=stefan_url)
+	embed.set_thumbnail(url=stefan_url)
+	embed.add_field(name="", value=init_message, inline=False)
+
+	messageId = await channel.send(embed=embed)
 
 	while True:
 
-		message = await announceChannel.fetch_message(messageId)
+		message = await channel.fetch_message(messageId.id)
 
-		rating_emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+		def check(reaction, user):
 
-		for i in range(len(rating_emojis)):
-				await message.add_reaction(rating_emojis[i])
+			return user == postedUser
 
-		for reaction in message.reactions:
-			async for user in reaction.users():
-				if user.name == "Stefan Hebis":
-					print("")
-				else:
-					await TurdDeploy(channel, announceChannel, reaction, user)
-					await message.delete(10)
+		try:
+			reaction, user = await bot.wait_for(event="reaction_add",
+			                                    timeout=600,
+			                                    check=check)
+
+		except asyncio.TimeoutError:
+
+			return
+
+		else:
+			await TurdDeploy(channel, announceChannel, reaction, user)
+			await message.delete()
 
 
-async def TurdDeploy(channel, announceChannel, reaction):
+async def TurdDeploy(channel, announceChannel, reaction, user):
 
-	print(reaction)
+	messageText = f"***TurdLog Notification*** -- Turd (rating: {reaction.emoji}) Deployed By {getName(user.name)} ..."
 
-	messageText = f"***TurdLog Notification*** -- Turd (rating: {reaction.emoji}) Deployed By {user.name} ..."
+	embed = Embed(title="TurdLog", color=0x737ad9)
+	embed.set_author(name="Stefan Hebis", icon_url=stefan_url)
+	embed.set_thumbnail(url=stefan_url)
+	embed.add_field(name="", value=messageText, inline=False)
 
-	await channel.send(messageText)
+	await announceChannel.send(embed=embed)
+
+
+def getName(disc_name) -> str:
+	if disc_name == "edv_rd":
+		return "Ed"
+	elif disc_name == ".shamshir":
+		return "Kawa"
+	elif disc_name == "loopline":
+		return "Teo"
+	elif disc_name == "ogarmage":
+		return "Ale"
+	elif disc_name == "mindytyrone":
+		return "Bendik"
+	elif disc_name == "medelsnygg":
+		return "Danne"
+	elif disc_name == "marremarre":
+		return "Marre"
+	elif disc_name == "da_white_bernie_mac":
+		return "Micke"
+	elif disc_name == "kamyasso":
+		return "Kamy"
+	elif disc_name == "stibba2g4u":
+		return "Stibba"
+	elif disc_name == "nils4444":
+		return "Nils"
+	else:
+		return disc_name
