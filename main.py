@@ -129,7 +129,7 @@ async def nytt_smeknamn(ctx):
 	 "Utbränd sexarbetare", "Säsongsdeprimerad solovårare",
 	 "Kille Danne ringt polisen på", "Kyrkogårdsvaktmästarens pojk",
 	 "da Pussy Pirate", "DAN_DOLME.EXE", "Ales macka var inte ens så stor?",
-	 "Erik i Polyfamiljen"
+	 "Erik i Polyfamiljen", "Jag är Eds slav 😀", "Saganom", "Jar-Jar Zolfagary", "John_Lemon-Imagine.midi", "http://onlyfans.com/skogsmannen86", "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	]
 
 	random_nick = random.choice(nicknames)
