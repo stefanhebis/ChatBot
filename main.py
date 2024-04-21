@@ -3,7 +3,7 @@ import os
 import random
 import pytz
 from discord.ext import tasks
-from datetime import datetime, timedelta
+import datetime
 from keep_alive import keep_alive
 import asyncio
 import builtins
@@ -22,6 +22,11 @@ client = discord.Client()
 kanal_dev = 828918567712849920
 kanal_chatt = 757565322034151474
 kanal_turdlog = 1193542284172607548
+
+utc = datetime.timezone.utc
+
+# If no tzinfo is given then UTC is assumed.
+time = datetime.time(hour=18, minute=20, tzinfo=utc)
 
 
 def getName(disc_name) -> str:
@@ -129,7 +134,15 @@ async def nytt_smeknamn(ctx):
 	 "Utbränd sexarbetare", "Säsongsdeprimerad solovårare",
 	 "Kille Danne ringt polisen på", "Kyrkogårdsvaktmästarens pojk",
 	 "da Pussy Pirate", "DAN_DOLME.EXE", "Ales macka var inte ens så stor?",
-	 "Erik i Polyfamiljen", "Jag är Eds slav 😀", "Saganom", "Jar-Jar Zolfagary", "John_Lemon-Imagine.midi", "http://onlyfans.com/skogsmannen86", "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+	 "Erik i Polyfamiljen", "Jag är Eds slav 😀", "Saganom", "Jar-Jar Zolfagary",
+	 "John_Lemon-Imagine.midi", "http://onlyfans.com/skogsmannen86",
+	 "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "Skegries Don Draper",
+	 "Jokso", "Den Plågade Poeten", "BIRSTA_PLAYBOY", "JokerEskilstuna69",
+	 "rälig tolle", "SkitMannen", "Legitimerad MilfHunter",
+	 f"Pissbäbis {getName(ctx.author.name)}", "Elvis Presly!!!!!!!!!!!",
+	 "*,._.VarmKorvÄtaren._.,*", f"Dark{getName(ctx.author.name)}666",
+	 "Jag är ond nu..", "Jichael Mackson", "DallasDragaren", "#SerbiaGlutenFree",
+	 "'Bärsomanien i Skegrie'-teorin", "bajs"
 	]
 
 	random_nick = random.choice(nicknames)
@@ -383,21 +396,50 @@ async def on_message(message):
 async def kolla_klockan():
 	nutid = datetime.now(pytz.timezone("Europe/Stockholm"))
 	nutid_str = datetime.strftime(nutid, "%H:%M:%S")
+	print(f"klockan är{nutid_str}")
 	if nutid_str == "06:00:00":
 		inställningar = bleep.main(init=True)
 		print(inställningar)
+		return
 		#await client.get_channel(int(kanal_dev)).send(inställningar)
-	if nutid_str == "18:00:00":
+	if nutid_str == "06:00:00":
 		dagens_nyheter()
 		print("dagens nyheter")
+		return
 
 
-@kolla_klockan.before_loop
-async def w8():
-	await client.wait_until_ready()
+@tasks.loop(time=time)
+async def dagens_nyheter_task(ctx):
+	channel = ctx.channel
+
+	dagens_datum = datetime.now(
+	 pytz.timezone('Europe/Stockholm')).strftime("%d/%m/%Y")
+	dagens_headline = headline.main()
+	dagens_headline_text = dagens_headline[0]
+	dagens_headline_bild_url = dagens_headline[1]
+	dagens_headline_string = f"JUST NU: {dagens_headline_text}"
+
+	dagens_opinion_string = opinion.main()
+
+	dagens_opinion_namn = roll.randomName("Skribent")
+
+	tidningsnamn = opinion.tidning()
+
+	embed = discord.Embed(title=f"Dagens nyheter för {dagens_datum}",
+	                      color=0x737ad9)
+	embed.set_author(name=f"{tidningsnamn}")
+	# embed.set_thumbnail(url=dagens_headline_bild_url)
+	embed.add_field(name=dagens_headline_string, value="", inline=False)
+
+	embed.add_field(name=f"Dagens insändare av {dagens_opinion_namn}",
+	                value=dagens_opinion_string,
+	                inline=False)
+
+	await channel.send(embed=embed)
 
 
 kolla_klockan.start()
+dagens_nyheter_task.start()
 keep_alive()
 
 
